@@ -15,9 +15,8 @@ class SlidingWindow(object):
         # 调用成功的记录
         self.success = []  # list(<调用成功的时间戳>)
 
-    def check_limit(self):
+    def check_limit(self, now):
         # 检查窗口循环
-        now = time.time()
         duration = now - self.next_stamp
         if duration >= 0:
             # 长时间没有请求的情况下，补前面的窗口
@@ -25,7 +24,7 @@ class SlidingWindow(object):
                 if len(self.windows) == self.wnd_count:
                     self.windows.pop(0)
                 self.windows.append(0)
-            self.next_stamp = math.ceil(duration / self.wnd_size) * self.wnd_size + self.start_time
+            self.next_stamp = math.ceil(duration / self.wnd_size) * self.wnd_size + self.next_stamp
         # 检查总限流数
         if sum(self.windows) == self.limit:
             # ERR_LIMIT
@@ -34,8 +33,10 @@ class SlidingWindow(object):
         self.windows[-1] += 1
         self.success.append(now)
 
+    def tick(self, now):
+        pass
+
 
 if __name__ == '__main__':
-    obj = SlidingWindow(1, 10, 2000)
-    draw.simulate_requests(obj)
-    draw.generate_time_series_plot(obj.success, 0.1)
+    obj = SlidingWindow(0.1, 10, 200)
+    draw.simulate_cases(obj)

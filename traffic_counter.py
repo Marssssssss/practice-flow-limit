@@ -15,9 +15,8 @@ class TrafficCounter(object):
         # 记录数据
         self.success = []  # list(<通过调用的时间戳>)
 
-    def check_limit(self):
+    def check_limit(self, now):
         # 窗口结束，重置计数
-        now = time.time()
         if now >= self.next_stamp:
             self.next_stamp = self.start_time + math.ceil(now - self.start_time) * self.wnd_size
             self.counter = 0
@@ -29,8 +28,10 @@ class TrafficCounter(object):
         self.counter += 1
         self.success.append(now)
 
+    def tick(self, now):
+        pass
+
 
 if __name__ == '__main__':
     obj = TrafficCounter(1, 200)
-    draw.simulate_requests(obj)
-    draw.generate_time_series_plot(obj.success, 0.1)
+    draw.simulate_cases(obj)
